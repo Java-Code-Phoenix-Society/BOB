@@ -1,3 +1,4 @@
+package bob;
 // $Id: Bob.java,v 1.5 1997/04/04 15:41:22 lcrnkovi Exp lcrnkovi $
 // $Log: Bob.java,v $
 // Revision 1.5  1997/04/04 15:41:22  lcrnkovi
@@ -26,6 +27,8 @@
 
   */
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -51,31 +54,26 @@ public class Bob extends JFrame {
     public static URL url;
     public static StringBuffer Conversation; //the conversation log
     public static Image bobImage;
-    final String iName = "bob_dev.gif"; //a nice picture
+    static final String BOB_DEV_GIF = "bob_dev.gif"; //a nice picture
     STextArea out; //Special TextArea - for human-like output
     TextArea in;
     Button send;
     Button quitter;
-    Button RC;
+    Button btnRC;
     Picture picture; //the actual panel where the very nice picture is displayed
     String currAnswer = "";
     String ans;
-    private Event lastEvent; //�vent-tracking
 
     /**
      * Support application format for the program
      */
     public static void main(String[] args) {
         isApplet = false;
-        //JFrame f = new JFrame("Bob");
         Bob win = new Bob();
         win.init();
-        //win.add("Center", win);
         win.setSize(640, 420);
-        //win.pack();
-        win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         win.setVisible(true);
-
     }
 
     /**
@@ -98,11 +96,11 @@ public class Bob extends JFrame {
         quitter.setBounds(126, 293, 118, 30);
         setBackground(Color.white);
 
-        bobImage = Toolkit.getDefaultToolkit().getImage(iName); //load the img
+        bobImage = Toolkit.getDefaultToolkit().getImage(BOB_DEV_GIF); //load the img
 
-        RC = new Button("View Conversation");
-        RC.setBounds(7, 338, 238, 28);
-        add(RC);
+        btnRC = new Button("View Conversation");
+        btnRC.setBounds(7, 338, 238, 28);
+        add(btnRC);
         in = new TextArea();
         in.setBounds(7, 150, 611, 118);
         add(in);
@@ -114,9 +112,7 @@ public class Bob extends JFrame {
 
         if (isApplet) quitter.disable();
 
-
         out.type("Hello!");
-        //}}
     }
 
 
@@ -125,7 +121,8 @@ public class Bob extends JFrame {
     /**
      * Create a command-chain based on user interaction.
      */
-    public boolean action(Event evt, Object arg) {
+    @Override
+    public boolean action(@NotNull Event evt, Object arg) {
         if (evt.target instanceof Button || evt.target instanceof TextArea) {
             if ((this.in.getText()).equalsIgnoreCase("quit") || arg.toString().equals("Quit")) System.exit(0);
             if (arg.toString().equals("View Conversation")) printConv();
@@ -141,10 +138,10 @@ public class Bob extends JFrame {
     public void doChain(String txt) {
         Conversation.append("U: ").append(txt).append("\n");
         out.clear();
-        ans = b.basic_answer(txt);
+        ans = b.basicAnswer(txt);
         if (!(ans.equals("-"))) answer(ans);
-        if (b.gram_answer(txt).equals("#") && ans != null) this.out.type("Err, is this supposed to be English?");
-        if (ans != null) answer(b.avoid_answer(txt));
+        if (b.gramAnswer(txt).equals("#") && ans != null) this.out.type("Err, is this supposed to be English?");
+        if (ans != null) answer(b.avoidAnswer(txt));
     }
 
     /**

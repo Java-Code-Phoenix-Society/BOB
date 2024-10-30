@@ -1,12 +1,13 @@
-// $Id: Keyword.java,v 1.2 1997/03/31 21:55:13 lcrnkovi Exp lcrnkovi $
-// $Log: Keyword.java,v $
+package bob;
+// $Id: bob.Keyword.java,v 1.2 1997/03/31 21:55:13 lcrnkovi Exp lcrnkovi $
+// $Log: bob.Keyword.java,v $
 // Revision 1.2  1997/03/31 21:55:13  lcrnkovi
 // RCS improvements
 //
 
 /*
  *
- * Keyword
+ * bob.Keyword
  *
  */
 
@@ -14,15 +15,15 @@ import java.util.Vector;
 
 /**
  * ---------------------------------------------------
- * CLASS: Keyword
+ * CLASS: bob.Keyword
  * SUPERCLASS: none
  * PURPOSE: Provide a structure for the databases.
  * ---------------------------------------------------
  */
 public class Keyword {
-    int t_nr = -1;
-    Vector keyword = new Vector();
-    Vector text = new Vector();
+    int tNr = -1;
+    Vector<String> keywords = new Vector<>();
+    Vector<String> text = new Vector<>();
 
     /**
      * ---------------------------------------------------
@@ -32,19 +33,16 @@ public class Keyword {
      * ---------------------------------------------------
      */
     public String getText(String in) {
-        for (int i = 0; i < keyword.size(); i++) {
-            if (in.indexOf((String) keyword.elementAt(i)) != -1 ||
-                    in.equals((String) keyword.elementAt(i))) {
-                if (t_nr < text.size())
-                    t_nr++;
+        for (int i = 0; i < keywords.size(); i++) {
+            if (in.indexOf(keywords.elementAt(i)) != -1 ||
+                    in.equals(keywords.elementAt(i))) {
+                if (tNr < text.size())
+                    tNr++;
                 else
-                    t_nr = text.size();
-
-
-                //System.out.println((String)text.elementAt(t_nr));
+                    tNr = text.size();
 
                 try {
-                    return (String) text.elementAt(t_nr);
+                    return text.elementAt(tNr);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     return Bob.b.fullOfIt();
                 }
@@ -62,12 +60,12 @@ public class Keyword {
      * ---------------------------------------------------
      */
     public String returnText() {
-        if (t_nr < text.size())
-            t_nr++;
+        if (tNr < text.size())
+            tNr++;
         else
-            t_nr = text.size();
+            tNr = text.size();
 
-        return (String) text.elementAt(t_nr);
+        return text.elementAt(tNr);
     }
 }
 

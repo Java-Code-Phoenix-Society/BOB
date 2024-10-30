@@ -1,19 +1,23 @@
-// $Id: Words.java,v 1.2 1997/03/31 21:55:13 lcrnkovi Exp lcrnkovi $
-// $Log: Words.java,v $
+package bob;
+// $Id: bob.Words.java,v 1.2 1997/03/31 21:55:13 lcrnkovi Exp lcrnkovi $
+// $Log: bob.Words.java,v $
 // Revision 1.2  1997/03/31 21:55:13  lcrnkovi
 // RCS improvements
 //
 
 /**
  * ---------------------------------------------------
- * CLASS: Words
+ * CLASS: bob.Words
  * SUPERCLASS: none
  * PURPOSE: lingual-database.
  * ---------------------------------------------------
  */
 class Words {
+    private Words() {
+        // empty
+    }
 
-    static String question[] = {
+    static String[] question = {
             "what",
             "when",
             "where",
@@ -23,7 +27,7 @@ class Words {
             "how"
     };
 
-    static String verb[] = {
+    static String[] verb = {
             "am", "are", "were",
             "is", "was",
             "will", "would",
@@ -34,7 +38,7 @@ class Words {
             "shall", "should", "like"
     };
 
-    static String pronoun[] = {
+    static String[] pronoun = {
             "you",
             "i",
             "me",
@@ -48,7 +52,7 @@ class Words {
             "the"
     };
 
-    static String adjective[] = {
+    static String[] adjective = {
             "your",
             "my",
             "their",
@@ -73,7 +77,7 @@ class Words {
             "good"
     };
 
-    static String possessive[] = {
+    static String[] possessive = {
             "yours",
             "mine",
             "yourself",
@@ -87,14 +91,14 @@ class Words {
             "the"
     };
 
-    static String adverb[] = {
+    static String[] adverb = {
             "not",
             "be",
             "been",
             "doing"
     };
 
-    static String number[] = {
+    static String[] number = {
             "0",
             "1",
             "2",
@@ -143,7 +147,7 @@ class Words {
             "infinit"
     };
 
-    static String operator[] = {
+    static String[] operator = {
             "+",
             "-",
             "*",
@@ -162,7 +166,7 @@ class Words {
             "before"
     };
 
-    static String day[] = {
+    static String[] day = {
             "monday",
             "tuesday",
             "wednesday",
@@ -172,7 +176,7 @@ class Words {
             "sunday"
     };
 
-    static String month[] = {
+    static String[] month = {
             "january",
             "february",
             "march",
@@ -187,7 +191,7 @@ class Words {
             "december"
     };
 
-    static String color[] = {
+    static String[] color = {
 
             "black", "white", "brown",
             "red", "blue", "green",

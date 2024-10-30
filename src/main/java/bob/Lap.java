@@ -1,5 +1,6 @@
-// $Id: Lap.java,v 1.3 1997/04/04 14:44:42 lcrnkovi Exp lcrnkovi $
-// $Log: Lap.java,v $
+package bob;
+// $Id: bob.Lap.java,v 1.3 1997/04/04 14:44:42 lcrnkovi Exp lcrnkovi $
+// $Log: bob.Lap.java,v $
 // Revision 1.3  1997/04/04 14:44:42  lcrnkovi
 // The person conversion works now!!!!
 //
@@ -9,13 +10,16 @@
 
 /*
  *
- * Lap
+ * bob.Lap
  *
   
     Lexical Analysis Processor
 
 
  */
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Process the text entered by the user.
@@ -53,7 +57,7 @@ public class Lap {
     /**
      * segment the entered sentence into an array of strings.
      */
-    public static String[] segment(String msg) {
+    public static String[] segment(@NotNull String msg) {
         int words = 0; //word count
 
         for (int i = 0; i < msg.length(); i++) //get the length
@@ -78,7 +82,6 @@ public class Lap {
             if (start != last_space) seg[cnt] = msg.substring(start, last_space);
             else {
                 seg[cnt] = msg.substring(start, msg.length() - 1);
-                //System.out.println(seg[cnt]);
                 break;
             }
             cnt++;
@@ -91,12 +94,14 @@ public class Lap {
     /**
      * Clear the array of all signs.
      */
-    private static String[] clean(String[] msg)  //clean signs
+    @Contract("_ -> param1")
+    private static String[] clean(String @NotNull [] msg)  //clean signs
     {
         for (int i = 0; i < msg.length; i++) {
             StringBuilder str = new StringBuilder();
             for (int j = 0; j < msg[i].length(); j++) {
-                if (msg[i].charAt(j) != '.' && msg[i].charAt(j) != '?' && msg[i].charAt(j) != '!' && msg[i].charAt(j) != ',')
+                if (msg[i].charAt(j) != '.' && msg[i].charAt(j) != '?' &&
+                        msg[i].charAt(j) != '!' && msg[i].charAt(j) != ',')
                     str.append(msg[i].charAt(j));
             }
             msg[i] = str.toString();
@@ -109,7 +114,7 @@ public class Lap {
     /**
      * Analyze the structure of the entered sentence; find the positions of verbs, pronouns, adverbs, etc...
      */
-    static void get_words(String[] in) {
+    static void getWords(String @NotNull [] in) {
         String words;
         String[] keywords = new String[in.length];
 
@@ -120,8 +125,6 @@ public class Lap {
 
         for (int i = 0; i < in.length; i++) //pretty self-explaining loop
         {
-
-
             for (int j = 0; j < Words.adjective.length; j++) {
                 if (in[i].equals(Words.adjective[j])) {
                     adjective_num = i;
@@ -161,7 +164,7 @@ public class Lap {
                     question = in[i];
 
                 }
-                //System.out.println(Words.question[j]);
+                //System.out.println(bob.Words.question[j]);
             }
         }
 
@@ -170,21 +173,22 @@ public class Lap {
     /**
      * Look if the sentence contains the necessary words to be grammatically correct.
      */
-    public static boolean check_grammar() {
-        return adjective_num != -1 || adverb_num != -1 || pronoun_num != -1 || verb_num != -1 || possessive_num != -1 || question_num != -1;
+    public static boolean checkGrammar() {
+        return adjective_num != -1 || adverb_num != -1 || pronoun_num != -1 ||
+                verb_num != -1 || possessive_num != -1 || question_num != -1;
     }
 
     /**
      * Stand-alone support for debugging
      */
-    public static void main(String[] args) {
+    public static void main(String @NotNull [] args) {
         String all = "";
 
         for (String arg : args) all = arg + " ";
 
 
-        get_words(segment(all));
-        check_grammar();
+        getWords(segment(all));
+        checkGrammar();
         System.out.println("Placement :");
         System.out.println("(-1 indicates lack of word)");
         System.out.println("Adjective: " + adjective_num);
@@ -193,11 +197,11 @@ public class Lap {
         System.out.println("Verb: " + verb_num);
         System.out.println("Possessive: " + possessive_num);
         System.out.println("Question: " + question_num);
-        if (check_grammar()) System.out.println("The sentence is grammatically correct");
+        if (checkGrammar()) System.out.println("The sentence is grammatically correct");
         else System.out.println("Incorrect sentence");
     }
 
-    public static String formulateReply() {
+    public static @NotNull String formulateReply() {
         sent = changePerson(sent);
 
         String reply = "";
@@ -212,13 +216,13 @@ public class Lap {
         if (sent[0].equals("i") || sent[0].equals("you")) reply = handleIYou();
         else if (!sent[0].equals(question)) reply = handleTheRest();
 
-        //reply = changePerson(reply); //this should work in the future.
-        //System.out.println(answ);
+        //reply = changePerson(reply) //this should work in the future.
+        //System.out.println(answ)
 
         return insertTemplate(template, reply);
     }
 
-    public static String[] changePerson(String[] txt) //the really tricky part
+    public static String @NotNull [] changePerson(String[] txt) //the really tricky part
     {
         StringBuilder verbsBuilder = new StringBuilder();
         for (int i = 0; i < Words.verb.length; i++)
@@ -293,8 +297,8 @@ public class Lap {
             if (snt[i].equals("you") && !changed[i]) {
                 boolean isI = false;
 
-                if (i != 0) if (verbs.contains(snt[i - 1])) isI = true;
-                if (i != l) if (verbs.contains(snt[i + 1])) isI = true;
+                if (i != 0 && verbs.contains(snt[i - 1])) isI = true;
+                if (i != l && verbs.contains(snt[i + 1])) isI = true;
 
                 if (isI) snt[i] = "i";
                 else snt[i] = "me";
@@ -305,7 +309,7 @@ public class Lap {
     }
 
 
-    public static String replace(String in, String oldText, String newText) {
+    public static String replace(@NotNull String in, String oldText, String newText) {
         int idx = in.indexOf(oldText); //first match
         if (idx == 0) idx = 1;
         String uCT = in;
@@ -313,7 +317,6 @@ public class Lap {
             String fp = in.substring(0, idx); //first part
             String lp = in.substring(idx + oldText.length()); //last part
             in = fp + newText + lp;
-            //System.out.println(in);
             if (uCT.charAt(idx - 1) != ' ' && uCT.charAt(idx + 1) != ' ') in = uCT;
             idx = fp.length() + newText.length();
         }
@@ -341,9 +344,8 @@ public class Lap {
 
 
          */
-        if (ver.equals("is") || all[1].equals("was"))   //ex:i don't know what this ///is/was///
-            if (adverb_num == -1) //to avoid "is" twice
-                answ += ver;
+        if ((ver.equals("is") || all[1].equals("was")) && adverb_num == -1) //to avoid "is" twice
+            answ += ver;
 
         /*
           Adverbs mess it up.
@@ -365,7 +367,7 @@ public class Lap {
             adverb = "";
         } else {
             //ADD the verb
-            if (all.length > 3) if (!ver.equals("is") && !ver.equals("was") && !all[2].equals("it")) {
+            if (all.length > 3 && !ver.equals("is") && !ver.equals("was") && !all[2].equals("it")) {
                 answ = ver + " " + answ;
             }
 
@@ -380,15 +382,16 @@ public class Lap {
 
 
             */
-            if (all.length > 3)
-                if (all[2].equals("it") || all[1].equals("would") || all[1].equals("should") || all[1].equals("could") || all[1].equals("did") || all[1].equals("have") || all[1].equals("are"))       //i don't know what it will take
-                {
-                    StringBuilder answBuilder = new StringBuilder(all[2] + " " + all[1] + " ");
-                    for (int i = 3; i < all.length; i++)
-                        answBuilder.append(all[i]).append(" ");
-                    answ = answBuilder.toString();
+            if (all.length > 3 && (all[2].equals("it") || all[1].equals("would") ||
+                    all[1].equals("should") || all[1].equals("could") || all[1].equals("did") ||
+                    all[1].equals("have") || all[1].equals("are")))       //i don't know what it will take
+            {
+                StringBuilder answBuilder = new StringBuilder(all[2] + " " + all[1] + " ");
+                for (int i = 3; i < all.length; i++)
+                    answBuilder.append(all[i]).append(" ");
+                answ = answBuilder.toString();
 
-                }
+            }
 
         }
 
@@ -409,8 +412,6 @@ public class Lap {
         String answ; //answer
         String adv; //adverb
         String ver = all[verb_num]; ///verb
-
-        //ver = all[1];
 
         StringBuilder answBuilder1 = new StringBuilder();
         for (int i = 2; i < all.length; i++)
@@ -449,11 +450,10 @@ public class Lap {
                 answBuilder.append(all[q]).append(" ");
             answ = answBuilder.toString();
         }
-        //System.out.println(answ);
         return answ;
     }
 
-    public static String handleWhere() {
+    public static @NotNull String handleWhere() {
         StringBuilder answ = new StringBuilder();
         String adv;
         String ver;
@@ -465,7 +465,7 @@ public class Lap {
         return answ.toString();
     }
 
-    public static String handleWhich() {
+    public static @NotNull String handleWhich() {
         String answ;
         String adv;
         String ver;
@@ -483,7 +483,7 @@ public class Lap {
         return answ;
     }
 
-    public static String handleWho() {
+    public static @NotNull String handleWho() {
         String answ;
         String adv;
         String ver;
@@ -501,7 +501,7 @@ public class Lap {
         return answ;
     }
 
-    public static String handleHow() {
+    public static @NotNull String handleHow() {
         StringBuilder answ = new StringBuilder();
         String adv;
         String ver;
@@ -513,7 +513,7 @@ public class Lap {
         return answ.toString();
     }
 
-    public static String handleWhy() {
+    public static @NotNull String handleWhy() {
         StringBuilder answ = new StringBuilder();
         String adv;
         String ver;
@@ -526,7 +526,7 @@ public class Lap {
         return answ.toString();
     }
 
-    public static String handleIYou() {
+    public static @NotNull String handleIYou() {
         StringBuilder answ = new StringBuilder();
 
         for (String s : sent) answ.append(s).append(" ");
@@ -534,7 +534,7 @@ public class Lap {
         return answ.toString();
     }
 
-    public static String handleTheRest() {
+    public static @NotNull String handleTheRest() {
         String answ;
 
         StringBuilder answBuilder = new StringBuilder(sent[1] + " " + sent[0] + " ");
@@ -548,7 +548,7 @@ public class Lap {
     /**
      * insert in a template and return.
      */
-    public static String insertTemplate(String in, String answer) {
+    public static @NotNull String insertTemplate(@NotNull String in, String answer) {
         int end = in.indexOf('[') - 1;
         int start = end + 3;
 
@@ -564,7 +564,7 @@ public class Lap {
         return firstPart + " " + answer + " " + lastPart;
     }
 
-    public static String polish(String in) {
+    public static @NotNull String polish(String in) {
         in = replace(in, " . ", ". ");
         in = replace(in, " , ", ", ");
         in = replace(in, " ? ", "? ");

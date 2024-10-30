@@ -1,15 +1,18 @@
-// $Id: Spam.java,v 1.2 1997/03/31 21:55:13 lcrnkovi Exp lcrnkovi $
-// $Log: Spam.java,v $
+package bob;
+// $Id: bob.Spam.java,v 1.2 1997/03/31 21:55:13 lcrnkovi Exp lcrnkovi $
+// $Log: bob.Spam.java,v $
 // Revision 1.2  1997/03/31 21:55:13  lcrnkovi
 // RCS improvements
 //
 
 /*
  *
- * Spam
+ * bob.Spam
  *
  *Stream Processing and Analysing Module
  */
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -18,23 +21,23 @@ import java.util.Vector;
 
 /**
  * ---------------------------------------------------
- * CLASS: Spam
+ * CLASS: bob.Spam
  * SUPERCLASS: none
  * PURPOSE: Handles the I/O actually only input.
  * ---------------------------------------------------
  */
 public class Spam {
-    public static String fname;
-    public static String tname;
+    public static String fName;
+    public static String tName;
     public static boolean isApplet = false;
-    public static String n_subj = "#";
-    public static String n_txt = "-";
+    public static final String N_SUBJ = "#";
+    public static final String N_TXT = "-";
     public static String comment = "//";
 
 
     /**
      * ---------------------------------------------------
-     * CONSTRUCTOR: Spam
+     * CONSTRUCTOR: bob.Spam
      * PURPOSE: transfer the isApplet attribute from Bob.
      * ---------------------------------------------------
      */
@@ -48,13 +51,12 @@ public class Spam {
      * PURPOSE: load the database into a vector
      * ---------------------------------------------------
      */
-    public static final Vector load_structure(String fn) {
+    public static final @NotNull Vector<Keyword> loadStructure(String fn) {
 
-        Vector data = new Vector();
-        DataInputStream dis = Spam.set_stream(fn);
+        Vector<Keyword> data = new Vector<>();
+        DataInputStream dis = Spam.setStream(fn);
         String line;
-        String txt = new String();
-        String kword = new String();
+        StringBuilder txt = new StringBuilder();
         int nr = -1;
 
         boolean isKword = true;
@@ -62,24 +64,24 @@ public class Spam {
         try {
 
             while ((line = dis.readLine()) != null) {
-                if (line.equals(n_subj))//new keyword
+                if (line.equals(N_SUBJ))//new keyword
                 {
                     line = dis.readLine();
                     isKword = true;
                     data.addElement(new Keyword());
 
-                    if (!txt.equals(""))
-                        ((Keyword) data.elementAt(nr)).text.addElement(new String(txt));
+                    if (!txt.toString().equals(""))
+                        (data.elementAt(nr)).text.addElement(txt.toString());
 
                     nr++;
-                    txt = "";
+                    txt = new StringBuilder();
                 }
-                if (line.equals(n_txt)) //new text
+                if (line.equals(N_TXT)) //new text
                 {
                     line = dis.readLine();
-                    if (!txt.equals(""))
-                        ((Keyword) data.elementAt(nr)).text.addElement(new String(txt));
-                    txt = "";
+                    if (!txt.toString().equals(""))
+                        (data.elementAt(nr)).text.addElement(txt.toString());
+                    txt = new StringBuilder();
                     isKword = false;
 
                 }
@@ -88,17 +90,16 @@ public class Spam {
 
 
                 if (isKword) //add new keyword
-                    ((Keyword) data.elementAt(nr)).keyword.addElement(new String(line));
+                    data.elementAt(nr).keywords.addElement(line);
 
 
                 if (!isKword)         //if allright add text
-                    txt += line + "\n";
-
-
+                    txt.append(line).append("\n");
             }
 
 
         } catch (IOException e) {
+            // empty
         }
 
         return data;
@@ -106,12 +107,12 @@ public class Spam {
 
     /**
      * ---------------------------------------------------
-     * METHOD: set_stream
+     * METHOD: setStream
      * PURPOSE: Set the input-stream depending on if it runs
      * as an applet or program.
      * ---------------------------------------------------
      */
-    static DataInputStream set_stream(String fn) {
+    static DataInputStream setStream(String fn) {
         DataInputStream dis = null;
 
         if (!isApplet) {
@@ -126,7 +127,6 @@ public class Spam {
             URL theUrl;
             String url = fn;
             try {
-                //System.out.print(Bob.url.toString());
                 if (Bob.url != null)
                     theUrl = new URL(Bob.url, url);
                 else
@@ -150,14 +150,12 @@ public class Spam {
      * PURPOSE: stand-alone support for debbuging.
      * ---------------------------------------------------
      */
-    public static void main(String args[]) {
+    public static void main(@NotNull String @NotNull [] args) {
 
 
-        fname = "bob.dat";
-        tname = "bob.tpl";
-        Vector bob = load_structure(fname);
-        //System.out.println(bob.size());
-
+        fName = "bob.dat";
+        tName = "bob.tpl";
+        Vector<Keyword> bob = loadStructure(fName);
 
         if (args.length == 0) {
 
@@ -166,8 +164,8 @@ public class Spam {
                 Keyword tmp = (Keyword) bob.elementAt(i);
 
 
-                for (int j = 0; j < tmp.keyword.size(); j++) {
-                    System.out.println((String) tmp.keyword.elementAt(j));
+                for (int j = 0; j < tmp.keywords.size(); j++) {
+                    System.out.println((String) tmp.keywords.elementAt(j));
                 }
 
 
@@ -183,19 +181,17 @@ public class Spam {
             }
 
             String[] seg = Lap.segment(args[0].toLowerCase());
-            Lap.get_words(seg);
-            String all = "";
+            Lap.getWords(seg);
+            StringBuilder all = new StringBuilder();
 
-            for (int i = 0; i < seg.length; i++)
-                all += seg[i] + " \n";
-            //System.out.println(all);
+            for (String s : seg) all.append(s).append(" \n");
 
             Keyword[] k = new Keyword[bob.size()];
             for (int i = 0; i < bob.size(); i++) {
                 k[i] = (Keyword) bob.elementAt(i);
 
-                if (!(k[i].getText(all).equals("-"))) {
-                    System.out.println(k[i].getText(all));
+                if (!(k[i].getText(all.toString()).equals("-"))) {
+                    System.out.println(k[i].getText(all.toString()));
                     break;
                 }
 
@@ -205,4 +201,3 @@ public class Spam {
 
     }
 }
-
